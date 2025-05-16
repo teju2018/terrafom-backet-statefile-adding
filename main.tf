@@ -6,14 +6,14 @@ terraform {
 }
 
 provider "google" {
-  project     = var.project
-  region      = var.region
+  project     = "clam-458312"
+  region      = "us-central1"
 }
 
 resource "google_compute_instance" "vm_instance" {
   name         = "harness-demo-vm"
   machine_type = "e2-micro"
-  zone         = "${var.region}-a"
+  zone         = "us-central1-a"
 
   boot_disk {
     initialize_params {
