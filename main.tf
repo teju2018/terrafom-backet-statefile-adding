@@ -1,15 +1,30 @@
-terraform {
-  backend "gcs" {
-    bucket = "teju2018"
-    prefix = "vm-harness/statefile"
+provider "google" {
+  project = "clam-458312"
+  region  = "us-central1"
+}
+
+# 1. GCS Bucket to store state files or other artifacts
+resource "google_storage_bucket" "terraform_state" {
+  name     = "teju2018"
+  zone = "us-central1-c"
+
+  versioning {
+    enabled = true
+  }
+
+  uniform_bucket_level_access = true
+
+  lifecycle_rule {
+    action {
+      type = "Delete"
+    }
+    condition {
+      age = 365
+    }
   }
 }
 
-provider "google" {
-  project     = "clam-458312"
-  region      = "us-central1"
-}
-
+# 2. Google Compute VM instance
 resource "google_compute_instance" "vm_instance" {
   name         = "harness-demo-vm"
   machine_type = "e2-micro"
@@ -22,9 +37,7 @@ resource "google_compute_instance" "vm_instance" {
   }
 
   network_interface {
-    network = "default"
+    network       = "default"
     access_config {}
   }
-
-
 }
